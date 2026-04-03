@@ -9,9 +9,7 @@ DEBUG = os.getenv("DEBUG") == "True"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = [
-    "api.kovaidigikites.com",
-    "localhost",
-    "127.0.0.1"
+      "kovaidigikite-lp8v.vercel.app"
 ]
 
 INSTALLED_APPS = [
@@ -39,7 +37,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-     "https://kovaidigikite-lp8v.vercel.app"
+        "https://kovaidigikite.com",
+    "https://www.kovaidigikite.com"
 
 ]
 
