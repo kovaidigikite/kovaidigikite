@@ -10,8 +10,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = [
     "kovaidigikite-lp8v.vercel.app",
-    "kovaidigikite.com",
-    "www.kovaidigikite.com",
+    "kovaidigikite.in",
+    "www.kovaidigikite.in",
     "kovaidigikite.onrender.com"
 ]
 
