@@ -1,0 +1,64 @@
+/* MAIN */
+.order {
+background: linear-gradient(
+  135deg,
+  #f8fafc,   /* white */
+  #e2e8f0,
+  #c7d2fe,
+  #1e3a8a    /* dark blue */
+);
+  min-height: 100vh;
+  padding-top: 90px; 
+   margin-top: 100px;   /* navbar height */
+}
+
+/* CENTER WRAPPER */
+.order-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: calc(100vh - 90px);
+}
+
+/* BOX */
+.order-box {
+  width: 400px;
+  background: #111827;
+
+  padding: 30px;
+  border-radius: 20px;
+
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* TITLE */
+.order-box h2 {
+  text-align: center;
+  color: white;
+  margin-bottom: 25px;
+}
+
+/* FORM */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* inputs */
+.form input,
+.form textarea {
+  width: 100%;
+}
+
+/* button */
+.order-btn {
+  width: 100%;
+  background: #7c3aed;
+  border: none;
+}
+
+.order-btn:hover {
+  background: #6d28d9;
+}

@@ -1,0 +1,159 @@
+
+<p-toast></p-toast>
+<section class="about">
+  <!-- CONTENT -->
+  <div class="about-content">
+
+    <h2>About Us</h2>
+
+    <p>
+      Kovai Digi Kite is a growing digital solutions startup committed to helping businesses build a strong and impactful presence in today’s competitive environment. Established with a clear focus on supporting small businesses and emerging entrepreneurs, we strive to deliver professional, creative, and effective digital services that meet modern business needs. As a startup, we understand the challenges of building a brand from the ground up, and we work closely with our clients as a reliable partner in their growth journey.
+    </p>
+
+    <p>
+      Our vision is to become a trusted digital solutions partner for businesses by delivering creative, data-driven, and high-quality services that help brands grow and succeed in a competitive market. Our mission is to empower small businesses and startups by providing innovative, affordable, and result-oriented digital solutions. We aim to support our clients with creative designs, modern technology, and data-driven strategies that create real impact and long-term growth.
+    </p>
+
+    <p>
+      We specialize in a wide range of designing and digital solutions that combine creativity with strategic thinking. Our services include social media posts, flex printing designs, business cards, presentations, resumes, and brochure creation. Along with designing, we also focus on website development, business analytics, and digital marketing, helping businesses establish a strong presence both online and offline.
+    </p>
+
+    <p>
+      At Kovai Digi Kite, we believe that successful business decisions are driven by both creativity and data. We work with data to understand customer behavior, track performance, and identify growth opportunities, ensuring that every solution we provide is practical, relevant, and results-oriented.
+    </p>
+
+    <p>
+      We take pride in supporting small businesses and startups by offering high-quality services without compromising affordability. Our approach is centered on understanding each client’s unique needs and delivering customized solutions that create real value and measurable impact.
+    </p>
+
+    <p class="closing">
+      At Kovai Digi Kite, we don’t just provide services — we build brands, support growth, and help businesses take off and fly high 
+    </p>
+
+  </div>
+
+</section>
+<section class="team">
+
+  <h2>Our Team</h2>
+
+  <p class="team-desc">
+    At Kovai Digi Kite, our team brings together expertise in business, technology, and creative solutions, 
+    working collaboratively to deliver high-quality and result-driven outcomes for our clients.
+  </p>
+
+  <div class="team-cards">
+
+    <!-- 1 -->
+    <div class="team-card">
+      <img src="assets/jh.jpeg" alt="Jhaisiva">
+      <h3>Jhaisiva P V</h3>
+      <h4>Operations & Business Analytics</h4>
+      <p>
+        BSc Statistics | MBA Textile Business Analytics with Marketing (Ongoing)
+      </p>
+      <p>
+        Leads operations and business strategy with a strong focus on data-driven decision-making. 
+        Specializes in understanding client requirements and aligning solutions with real business goals.
+      </p>
+    </div>
+
+    <!-- 2 -->
+    <div class="team-card">
+      <img src="assets/sri.png" alt="Srinivasan">
+      <h3>Srinivasan M</h3>
+      <h4>Senior Developer</h4>
+      <p>
+        BSc Computer Science | MSc Computer Science (Ongoing)
+      </p>
+      <p>
+        Heads the technical development of projects, ensuring all digital solutions are reliable, 
+        efficient, and built with strong architecture and performance standards.
+      </p>
+    </div>
+
+    <!-- 3 -->
+    <div class="team-card">
+      <img src="assets/kri.jpeg" alt="Krishna">
+      <h3>Krishna Prakash V S</h3>
+      <h4>Junior Developer</h4>
+      <p>
+        BSc Computer Science
+      </p>
+      <p>
+        Supports development and implementation processes, contributing to the creation of 
+        user-friendly and effective digital applications.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- 🔥 CONTACT SECTION (reuse same) -->
+<section class="contact">
+
+  <h2>Contact Us</h2>
+
+  <div class="contact-container">
+
+    <!-- LEFT -->
+    <div class="contact-info">
+      <h3>Kovai Digi Kite</h3>
+      <p>Let Your Business Fly High</p>
+
+     <p>
+  <i class="pi pi-phone"></i>
+  <a href="tel:+916381203973">+91 63812 03973</a>
+</p>
+
+<p>
+  <i class="pi pi-envelope"></i>
+  <a href="mailto:kovaidigikites@gmail.com">
+    kovaidigikites@gmail.com
+  </a>
+</p>
+
+<p>
+  <i class="pi pi-instagram"></i>
+  <a href="https://instagram.com/kovai_digi_kite" target="_blank">
+    @kovaidigikites
+  </a>
+</p>
+    </div>
+
+  <p-toast></p-toast>
+
+<div class="contact-form">
+  <input
+    type="text"
+    [(ngModel)]="contactName"
+    placeholder="Your Name">
+
+  <input
+    type="email"
+    [(ngModel)]="contactEmail"
+    placeholder="Your Email">
+
+  <input
+    type="tel"
+    [(ngModel)]="contactPhone"
+    placeholder="Your Phone Number">
+
+  <textarea
+    rows="4"
+    [(ngModel)]="contactMessage"
+    placeholder="Your Message">
+  </textarea>
+
+  <button
+    pButton
+    label="Send Message"
+    icon="pi pi-send"
+    (click)="sendMessage()">
+  </button>
+</div>
+  </div>
+
+</section>

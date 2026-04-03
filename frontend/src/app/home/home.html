@@ -1,0 +1,166 @@
+<p-toast></p-toast>
+<section class="hero">
+  <div class="hero-content">
+    
+    <!-- LEFT -->
+    <div class="centre">
+      <h1>Kovai Digi Kite</h1>
+      <p>
+        Let Your Business Fly High.
+      </p>
+      <button
+  pButton
+  label="Get Started"
+  class="p-button-rounded p-button-lg"
+  routerLink="/services">
+</button>
+    </div>
+  </div>
+
+ <div class="curve">
+  <svg viewBox="0 0 1440 150" preserveAspectRatio="none">
+    <path 
+      d="M0,80C120,120,240,140,360,130C480,120,600,80,720,70C840,60,960,90,1080,100C1200,110,1320,100,1440,90V150H0Z"
+      fill="#ffffff">
+    </path>
+  </svg>
+</div>
+</section>
+
+<!-- NEXT WHITE SECTION -->
+<section class=""></section>
+<section class="our-work">
+
+  <h2>Our Work</h2>
+
+ <p-carousel 
+  [value]="images"
+  [numVisible]="3"
+  [numScroll]="1"
+  [circular]="true"
+  [autoplayInterval]="2500"
+  [showIndicators]="false"
+  [showNavigators]="true"
+  styleClass="custom-carousel">
+
+  <ng-template let-img let-i="index" pTemplate="item">
+    <div class="card" [class.center]="i === 1">
+      <img [src]="img" />
+    </div>
+  </ng-template>
+
+</p-carousel>
+
+</section>
+<section class="services">
+
+  <h2>Our Services</h2>
+
+  <div class="service-cards">
+
+    <!-- 1️⃣ Academic -->
+    <div class="service">
+      <i class="pi pi-book"></i>
+      <h3>Academic</h3>
+      <ul>
+        <li>Resume</li>
+        <li>Presentation</li>
+        <li>Projects</li>
+        <li>Activities</li>
+      </ul>
+    </div>
+
+    <!-- 2️⃣ Business -->
+    <div class="service">
+      <i class="pi pi-briefcase"></i>
+      <h3>Business</h3>
+      <ul>
+        <li>Presentation</li>
+        <li>Websites</li>
+        <li>Applications</li>
+        <li>Digital Marketing</li>
+        <li>Business Analytics</li>
+      </ul>
+    </div>
+
+    <!-- 3️⃣ Designing & Printing -->
+    <div class="service">
+      <i class="pi pi-palette"></i>
+      <h3>Designing & Printing</h3>
+      <ul>
+        <li>Business Card</li>
+        <li>Brochures</li>
+        <li>Invitation</li>
+        <li>Social Media Post</li>
+        <li>Flex Printing</li>
+      </ul>
+    </div>
+
+  </div>
+
+</section>
+<section class="contact">
+
+  <h2>Contact Us</h2>
+
+  <div class="contact-container">
+
+    <!-- LEFT -->
+    <div class="contact-info">
+      <h3>Kovai Digi Kite</h3>
+      <p>Let Your Business Fly High</p>
+
+     <p>
+  <i class="pi pi-phone"></i>
+  <a href="tel:+916381203973">+91 63812 03973</a>
+</p>
+
+<p>
+  <i class="pi pi-envelope"></i>
+  <a href="mailto:kovaidigikites@gmail.com">
+    kovaidigikites@gmail.com
+  </a>
+</p>
+
+<p>
+  <i class="pi pi-instagram"></i>
+  <a href="https://instagram.com/kovai_digi_kite" target="_blank">
+    @kovaidigikites
+  </a>
+</p>
+    </div>
+
+  <p-toast></p-toast>
+
+<div class="contact-form">
+  <input
+    type="text"
+    [(ngModel)]="contactName"
+    placeholder="Your Name">
+
+  <input
+    type="email"
+    [(ngModel)]="contactEmail"
+    placeholder="Your Email">
+
+  <input
+    type="tel"
+    [(ngModel)]="contactPhone"
+    placeholder="Your Phone Number">
+
+  <textarea
+    rows="4"
+    [(ngModel)]="contactMessage"
+    placeholder="Your Message">
+  </textarea>
+
+  <button
+    pButton
+    label="Send Message"
+    icon="pi pi-send"
+    (click)="sendMessage()">
+  </button>
+</div>
+  </div>
+
+</section>

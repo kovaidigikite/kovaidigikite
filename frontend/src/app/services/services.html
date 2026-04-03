@@ -1,0 +1,20 @@
+<section class="services-page">
+
+  <h2 class="title">Our Services</h2>
+
+  <div class="grid">
+
+    <p-card *ngFor="let s of services" 
+            (click)="goToOrder(s.name)" 
+            class="card">
+
+      <div class="card-content">
+        <h3>{{ s.name }}</h3>
+        <p>Starts from ₹{{ s.price }}</p>
+      </div>
+
+    </p-card>
+
+  </div>
+
+</section>

@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+.feedback-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff 40%, #0f172a 40%);
+  padding: 100px 40px;
+  font-family: 'Poppins', sans-serif;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.feedback-card,
+.contact-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.feedback-card h2,
+.contact-card h3 {
+  color: #0f172a;
+  margin-bottom: 25px;
+}
+
+.grid-form {
+  display: grid;
+  gap: 20px;
+}
+
+input,
+textarea,
+.service-dropdown {
+  width: 100%;
+}
+
+input,
+textarea {
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.rating-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rating-box label {
+  font-weight: 500;
+  color: #334155;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 25px;
+  border-radius: 14px;
+  background: #fcfcfe;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+}
+
+.contact-card {
+  color: #334155;
+}
+
+.contact-card p {
+  margin: 14px 0;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.contact-item i {
+  font-size: 1.1rem;
+  color: #0f172a;
+  width: 20px;
+}
+.cta-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.cta-buttons button {
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.cta-buttons button:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .feedback-page {
+    grid-template-columns: 1fr;
+  }
+}

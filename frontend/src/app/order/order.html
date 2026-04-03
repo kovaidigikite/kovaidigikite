@@ -1,0 +1,54 @@
+<p-toast></p-toast>
+
+<section class="order">
+  <div class="order-wrapper">
+    <div class="order-box">
+      <h2>Place Your Order</h2>
+
+      <div class="form">
+        <input pInputText [(ngModel)]="name" placeholder="Your Name" />
+
+        <input
+  pInputText
+  [(ngModel)]="email"
+  placeholder="Enter your email"
+/>
+
+<input
+  pInputText
+  [(ngModel)]="phone"
+  placeholder="Enter mobile number"
+/>
+
+        <p-select
+          [options]="services"
+          optionLabel="name"
+          [(ngModel)]="selectedService"
+          placeholder="Select Service">
+        </p-select>
+
+       <p-fileupload
+  mode="basic"
+  chooseLabel="Upload File"
+  [auto]="false"
+  [customUpload]="true"
+  (onSelect)="onFileSelect($event)">
+</p-fileupload>
+
+        <textarea
+          pInputTextarea
+          [(ngModel)]="message"
+          rows="4"
+          placeholder="Requirements">
+        </textarea>
+
+        <button
+          pButton
+          label="Place Order"
+          icon="pi pi-check"
+          (click)="placeOrder()">
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

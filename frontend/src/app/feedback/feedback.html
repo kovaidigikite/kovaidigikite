@@ -1,0 +1,93 @@
+<p-toast></p-toast>
+
+<section class="feedback-page">
+  <div class="feedback-card">
+    <h2>Customer Feedback</h2>
+
+    <div class="grid-form">
+      <input pInputText [(ngModel)]="name" placeholder="Your Name *" />
+      <input pInputText [(ngModel)]="orderDetails" placeholder="Order Details *" />
+      <input pInputText [(ngModel)]="contact" placeholder="Phone / Email *" />
+
+      <p-select
+        [options]="services"
+        [(ngModel)]="service"
+        placeholder="Select Service *"
+        styleClass="service-dropdown">
+      </p-select>
+
+      <div class="rating-box">
+        <label>Design Feedback *</label>
+        <p-rating [(ngModel)]="designFeedback"></p-rating>
+      </div>
+
+      <div class="rating-box">
+        <label>Customer Service *</label>
+        <p-rating [(ngModel)]="customerFeedback"></p-rating>
+      </div>
+
+      <textarea
+        pInputTextarea
+        [(ngModel)]="comments"
+        maxlength="500"
+        rows="4"
+        placeholder="Comments (optional)">
+      </textarea>
+
+      <div class="rating-box">
+        <label>Overall Rating *</label>
+        <p-rating [(ngModel)]="overallRating"></p-rating>
+      </div>
+    </div>
+
+    <button
+      pButton
+      label="Submit Feedback"
+      icon="pi pi-check"
+      class="submit-btn"
+      (click)="submitFeedback()">
+    </button>
+  </div>
+
+  <div class="contact-card">
+  <h3>Contact & Follow</h3>
+
+  <div class="contact-item">
+    <i class="pi pi-phone"></i>
+    <span>+91 63812 03973</span>
+  </div>
+
+  <div class="contact-item">
+    <i class="pi pi-envelope"></i>
+    <span>kovaidigikites@gmail.com</span>
+  </div>
+
+  <div class="contact-item">
+    <i class="pi pi-instagram"></i>
+    <span>kovai_digi_kite</span>
+  </div>
+   <div class="cta-buttons">
+  <a
+    href="https://wa.me/916381203973"
+    target="_blank"
+    class="cta-link">
+    <button
+      pButton
+      icon="pi pi-whatsapp"
+      label="WhatsApp">
+    </button>
+  </a>
+
+  <a
+    href="https://instagram.com/kovai_digi_kite"
+    target="_blank"
+    class="cta-link">
+    <button
+      pButton
+      icon="pi pi-instagram"
+      label="Instagram">
+    </button>
+  </a>
+</div>
+</div>
+</section>
