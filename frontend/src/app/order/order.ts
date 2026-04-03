@@ -96,7 +96,7 @@ export class OrderComponent {
     formData.append('file', this.selectedFile);
   }
 
-  fetch(' https://kovaidigikite.onrender.com/api/order/', {
+  fetch('https://kovaidigikite.onrender.com/api/order/', {
     method: 'POST',
     body: formData
   })

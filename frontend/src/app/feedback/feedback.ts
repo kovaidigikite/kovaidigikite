@@ -73,7 +73,7 @@ export class FeedbackComponent {
       detail: 'Thank you for your feedback 💙'
     });
 
-    fetch('https://https://kovaidigikite.onrender.com/api/feedback/', {
+    fetch('https://kovaidigikite.onrender.com/api/feedback/', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'

@@ -9,7 +9,10 @@ DEBUG = os.getenv("DEBUG") == "True"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = [
-      "kovaidigikite-lp8v.vercel.app"
+    "kovaidigikite-lp8v.vercel.app",
+    "kovaidigikite.com",
+    "www.kovaidigikite.com",
+    "kovaidigikite.onrender.com"
 ]
 
 INSTALLED_APPS = [
