@@ -42,7 +42,7 @@ Message: {order.message}
         if order.file:
             email.attach_file(order.file.path)
 
-        email.send(fail_silently=False)
+        email.send(fail_silently=True)
 
     except Exception as e:
         print("ADMIN ORDER MAIL ERROR:", e)
