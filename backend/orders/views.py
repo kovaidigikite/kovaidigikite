@@ -1,3 +1,4 @@
+from threading import Thread
 from django.conf import settings
 from django.core.mail import send_mail, EmailMessage
 from rest_framework.decorators import api_view, parser_classes
@@ -6,26 +7,10 @@ from rest_framework.response import Response
 from .serializers import OrderSerializer, FeedbackSerializer, ContactSerializer
 
 
-@api_view(['POST'])
-@parser_classes([MultiPartParser, FormParser])
-def create_order(request):
-    serializer = OrderSerializer(data=request.data)
-
-    if not serializer.is_valid():
-        print("ORDER ERRORS:", serializer.errors)
-        return Response({
-            "success": False,
-            "errors": serializer.errors
-        }, status=400)
-
-    order = serializer.save()
-
-    # ✅ respond instantly
-    response = Response({
-        "success": True,
-        "message": "Order placed successfully"
-    })
-
+# =========================
+# BACKGROUND EMAIL HELPERS
+# =========================
+def send_order_emails(order):
     # ✅ admin mail
     try:
         email = EmailMessage(
@@ -58,7 +43,7 @@ Message: {order.message}
             message=f"""
 Hi {order.name},
 
-Thank you for choosing Kovai Digi Kites
+Thank you for choosing Kovai Digi Kites.
 
 Your order for "{order.service}" has been received successfully.
 
@@ -74,35 +59,8 @@ KDK Team
     except Exception as e:
         print("CUSTOMER MAIL ERROR:", e)
 
-    return response
 
-
-@api_view(['POST'])
-def submit_feedback(request):
-    serializer = FeedbackSerializer(data=request.data)
-
-    if serializer.is_valid():
-        serializer.save()
-        return Response({"success": True})
-
-    return Response({
-        "success": False,
-        "errors": serializer.errors
-    }, status=400)
-
-
-@api_view(['POST'])
-def send_contact_message(request):
-    serializer = ContactSerializer(data=request.data)
-
-    if not serializer.is_valid():
-        return Response({
-            "success": False,
-            "errors": serializer.errors
-        }, status=400)
-
-    contact = serializer.save()
-
+def send_contact_email(contact):
     try:
         send_mail(
             subject='New Contact Message - KDK',
@@ -119,7 +77,74 @@ Message:
             fail_silently=True
         )
     except Exception as e:
-        print("MAIL ERROR:", e)
+        print("CONTACT MAIL ERROR:", e)
+
+
+# =========================
+# ORDER API
+# =========================
+@api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
+def create_order(request):
+    serializer = OrderSerializer(data=request.data)
+
+    if not serializer.is_valid():
+        print("ORDER ERRORS:", serializer.errors)
+        return Response({
+            "success": False,
+            "errors": serializer.errors
+        }, status=400)
+
+    order = serializer.save()
+
+    # ✅ background mail thread
+    Thread(target=send_order_emails, args=(order,)).start()
+
+    return Response({
+        "success": True,
+        "message": "Order placed successfully"
+    })
+
+
+# =========================
+# FEEDBACK API
+# =========================
+@api_view(['POST'])
+def submit_feedback(request):
+    serializer = FeedbackSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "success": True,
+            "message": "Feedback submitted successfully"
+        })
+
+    print("FEEDBACK ERRORS:", serializer.errors)
+    return Response({
+        "success": False,
+        "errors": serializer.errors
+    }, status=400)
+
+
+# =========================
+# CONTACT API
+# =========================
+@api_view(['POST'])
+def send_contact_message(request):
+    serializer = ContactSerializer(data=request.data)
+
+    if not serializer.is_valid():
+        print("CONTACT ERRORS:", serializer.errors)
+        return Response({
+            "success": False,
+            "errors": serializer.errors
+        }, status=400)
+
+    contact = serializer.save()
+
+    # ✅ background mail thread
+    Thread(target=send_contact_email, args=(contact,)).start()
 
     return Response({
         "success": True,
