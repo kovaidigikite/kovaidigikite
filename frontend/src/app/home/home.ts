@@ -81,7 +81,7 @@ export class HomeComponent {
       message: this.contactMessage
     };
 
-    fetch('https://kovaidigikite.onrender.com/api/contact/', {
+    fetch('https://kovaidigikite.onrender.com/contact/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
