@@ -11,7 +11,6 @@ from .serializers import OrderSerializer, FeedbackSerializer, ContactSerializer
 def create_order(request):
     serializer = OrderSerializer(data=request.data)
 
-    # ✅ debug serializer errors
     if not serializer.is_valid():
         print("ORDER ERRORS:", serializer.errors)
         return Response({
@@ -21,7 +20,13 @@ def create_order(request):
 
     order = serializer.save()
 
-    # ✅ company mail with attachment
+    # ✅ respond instantly
+    response = Response({
+        "success": True,
+        "message": "Order placed successfully"
+    })
+
+    # ✅ admin mail
     try:
         email = EmailMessage(
             subject='New Service Order - KDK',
@@ -38,7 +43,6 @@ Message: {order.message}
             to=[settings.EMAIL_HOST_USER]
         )
 
-        # ✅ attach uploaded file/image
         if order.file:
             email.attach_file(order.file.path)
 
@@ -47,7 +51,7 @@ Message: {order.message}
     except Exception as e:
         print("ADMIN ORDER MAIL ERROR:", e)
 
-    # ✅ customer confirmation mail
+    # ✅ customer mail
     try:
         send_mail(
             subject='Order Received - Kovai Digi Kites',
@@ -65,15 +69,12 @@ KDK Team
             """,
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[order.email],
-            fail_silently=False
+            fail_silently=True
         )
     except Exception as e:
         print("CUSTOMER MAIL ERROR:", e)
 
-    return Response({
-        "success": True,
-        "message": "Order placed successfully"
-    })
+    return response
 
 
 @api_view(['POST'])
@@ -115,7 +116,7 @@ Message:
             """,
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[settings.EMAIL_HOST_USER],
-            fail_silently=False
+            fail_silently=True
         )
     except Exception as e:
         print("MAIL ERROR:", e)
