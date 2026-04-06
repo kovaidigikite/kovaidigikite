@@ -1,8 +1,12 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/((?!sitemap.xml|robots.txt).*)",
-      "destination": "/index.html"
+      "src": "/(sitemap.xml|robots.txt)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/.*",
+      "dest": "/browser/index.html"
     }
   ]
 }
