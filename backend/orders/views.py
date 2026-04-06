@@ -31,7 +31,7 @@ Message: {order.message}
         if order.file:
             email.attach_file(order.file.path)
 
-        email.send(fail_silently=True)
+        email.send(fail_silently=False)
 
     except Exception as e:
         print("ADMIN ORDER MAIL ERROR:", e)
@@ -54,7 +54,7 @@ KDK Team
             """,
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[order.email],
-            fail_silently=True
+            fail_silently=False
         )
     except Exception as e:
         print("CUSTOMER MAIL ERROR:", e)
@@ -74,7 +74,7 @@ Message:
             """,
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[settings.EMAIL_HOST_USER],
-            fail_silently=True
+            fail_silently=False
         )
     except Exception as e:
         print("CONTACT MAIL ERROR:", e)
