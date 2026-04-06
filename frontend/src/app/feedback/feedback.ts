@@ -67,27 +67,48 @@ export class FeedbackComponent {
       return;
     }
 
-    this.msg.add({
-      severity: 'success',
-      summary: 'Feedback Submitted',
-      detail: 'Thank you for your feedback 💙'
-    });
-
-    fetch(`${environment.apiUrl}/feedback/`,{
+   fetch(`${environment.apiUrl}/feedback/`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
     name: this.name,
-    orderDetails: this.orderDetails,
+    order_details: this.orderDetails,
     contact: this.contact,
     service: this.service,
-    designFeedback: this.designFeedback,
-    customerFeedback: this.customerFeedback,
+    design_feedback: this.designFeedback,
+    customer_feedback: this.customerFeedback,
     comments: this.comments,
-    overallRating: this.overallRating
+    overall_rating: this.overallRating
   })
 })
+.then(res => res.json())
+.then(data => {
+  console.log("FEEDBACK API:", data);
+
+  if (data.success) {
+    this.msg.add({
+      severity: 'success',
+      summary: 'Feedback Submitted',
+      detail: 'Thank you for your feedback'
+    });
+
+    this.name = '';
+    this.orderDetails = '';
+    this.contact = '';
+    this.service = '';
+    this.designFeedback = 0;
+    this.customerFeedback = 0;
+    this.comments = '';
+    this.overallRating = 0;
+  } else {
+    this.msg.add({
+      severity: 'error',
+      summary: 'Failed',
+      detail: JSON.stringify(data.errors)
+    });
+  }
+});
   }
 }
