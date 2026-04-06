@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { environment } from '../../environments/environment';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { RatingModule } from 'primeng/rating';
@@ -73,7 +73,7 @@ export class FeedbackComponent {
       detail: 'Thank you for your feedback 💙'
     });
 
-    fetch('https://kovaidigikite.onrender.com/api/feedback/', {
+    fetch(`${environment.apiUrl}/feedback/`,{
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'

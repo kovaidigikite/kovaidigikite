@@ -9,6 +9,7 @@ import { ToastModule } from 'primeng/toast';
 import { FileUploadModule } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Component({
   standalone: true,
@@ -96,7 +97,7 @@ export class OrderComponent {
     formData.append('file', this.selectedFile);
   }
 
-  fetch('https://kovaidigikite.onrender.com/api/order/', {
+  fetch(`${environment.apiUrl}/order/`, {
     method: 'POST',
     body: formData
   })
