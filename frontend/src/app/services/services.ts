@@ -15,20 +15,20 @@ export class ServicesComponent {
 
   constructor(private router: Router) {}
 
-  services = [
-    { name: 'Resume', price: 299,},
-    { name: 'Academic Presentation', price: 499, },
-    { name: 'Academic Project', price: 999, },
-    { name: 'Business Presentation', price: 799,  },
-    { name: 'Websites', price: 2999,  },
-    { name: 'Digital Marketing', price: 999, },
-    { name: 'Business Analytics', price: 1999, },
-    { name: 'Business Card Designing', price: 299,  },
-    { name: 'Brochures Designing', price: 299,  },
-    { name: 'Invitation Designing', price: 299,  },
-    { name: 'Social Media Post', price: 99, },
-    { name: 'Printing', price: 'Based on quentity', }
-  ];
+ services = [
+  { name: 'Resume', price: 299 },
+  { name: 'Academic Presentation', price: 499 },
+  { name: 'Academic Project', price: 999 },
+  { name: 'Business Presentation', price: 799 },
+  { name: 'Websites', price: 2999 },
+  { name: 'Digital Marketing', price: 999 },
+  { name: 'Business Analytics', price: 1999 },
+  { name: 'Business Card Designing', price: 299 },
+  { name: 'Brochures Designing', price: 299 },
+  { name: 'Invitation Designing', price: 299 },
+  { name: 'Social Media Post', price: 99 },
+  { name: 'Printing', note: 'Based on quantity' }
+];
 
   goToOrder(service: string) {
     this.router.navigate(['/order'], { queryParams: { service } });

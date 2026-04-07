@@ -4,16 +4,18 @@
 
   <div class="grid">
 
-    <p-card *ngFor="let s of services" 
-            (click)="goToOrder(s.name)" 
-            class="card">
+   <p-card *ngFor="let s of services"
+        (click)="goToOrder(s.name)"
+        class="card">
 
-      <div class="card-content">
-        <h3>{{ s.name }}</h3>
-        <p>Starts from ₹{{ s.price }}</p>
-      </div>
+  <div class="card-content">
+    <h3>{{ s.name }}</h3>
+    <p>
+      {{ s.price ? ('Starts from ₹' + s.price) : s.note }}
+    </p>
+  </div>
 
-    </p-card>
+</p-card>
 
   </div>
 
