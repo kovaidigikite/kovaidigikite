@@ -5,10 +5,15 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .serializers import OrderSerializer, FeedbackSerializer, ContactSerializer
 
+
+# ==================================
+# ORDER EMAIL HELPER
+# ==================================
 def send_order_emails(order):
+    # ✅ Admin mail
     try:
         email = EmailMessage(
-            subject='New Service Order - KDK',
+            subject="New Service Order - KDK",
             body=f"""
 New order received
 
@@ -22,18 +27,25 @@ Message: {order.message}
             to=[settings.EMAIL_HOST_USER]
         )
 
-        if order.file:
-            email.attach_file(order.file.path)
+        # ✅ Safe file attach
+        if order.file and hasattr(order.file, "path"):
+            try:
+                email.attach_file(order.file.path)
+            except Exception as file_error:
+                print("FILE ATTACH ERROR:", str(file_error))
 
         email.send(fail_silently=False)
+        print("ADMIN ORDER MAIL SENT")
 
     except Exception as e:
-        print("ADMIN ORDER MAIL ERROR:", e)
+        print("ADMIN ORDER MAIL ERROR:", str(e))
 
+    # ✅ Customer confirmation mail
     try:
-        send_mail(
-            subject='Order Received - Kovai Digi Kites',
-            message=f"""
+        if order.email:
+            send_mail(
+                subject="Order Received - Kovai Digi Kites",
+                message=f"""
 Hi {order.name},
 
 Thank you for choosing Kovai Digi Kites.
@@ -44,19 +56,24 @@ Our team will contact you soon.
 
 Regards,
 KDK Team
-            """,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[order.email],
-            fail_silently=False
-        )
+                """,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[order.email],
+                fail_silently=False
+            )
+            print("CUSTOMER ORDER MAIL SENT")
+
     except Exception as e:
-        print("CUSTOMER MAIL ERROR:", e)
+        print("CUSTOMER MAIL ERROR:", str(e))
 
 
+# ==================================
+# CONTACT EMAIL HELPER
+# ==================================
 def send_contact_email(contact):
     try:
         send_mail(
-            subject='New Contact Message - KDK',
+            subject="New Contact Message - KDK",
             message=f"""
 Name: {contact.name}
 Email: {contact.email}
@@ -69,15 +86,22 @@ Message:
             recipient_list=[settings.EMAIL_HOST_USER],
             fail_silently=False
         )
-    except Exception as e:
-        print("CONTACT MAIL ERROR:", e)
+        print("CONTACT MAIL SENT")
 
-@api_view(['POST'])
+    except Exception as e:
+        print("CONTACT MAIL ERROR:", str(e))
+
+
+# ==================================
+# ORDER API
+# ==================================
+@api_view(["POST"])
 @parser_classes([MultiPartParser, FormParser])
 def create_order(request):
     serializer = OrderSerializer(data=request.data)
 
     if not serializer.is_valid():
+        print("ORDER ERRORS:", serializer.errors)
         return Response({
             "success": False,
             "errors": serializer.errors
@@ -85,14 +109,22 @@ def create_order(request):
 
     order = serializer.save()
 
-    send_order_emails(order)
+    # ✅ Mail should never break API
+    try:
+        send_order_emails(order)
+    except Exception as e:
+        print("ORDER EMAIL FUNCTION ERROR:", str(e))
 
     return Response({
         "success": True,
         "message": "Order placed successfully"
     })
 
-@api_view(['POST'])
+
+# ==================================
+# FEEDBACK API
+# ==================================
+@api_view(["POST"])
 def submit_feedback(request):
     serializer = FeedbackSerializer(data=request.data)
 
@@ -110,10 +142,10 @@ def submit_feedback(request):
     }, status=400)
 
 
-# =========================
+# ==================================
 # CONTACT API
-# =========================
-@api_view(['POST'])
+# ==================================
+@api_view(["POST"])
 def send_contact_message(request):
     serializer = ContactSerializer(data=request.data)
 
@@ -126,7 +158,11 @@ def send_contact_message(request):
 
     contact = serializer.save()
 
-    send_contact_email(contact)
+    # ✅ Mail should never break API
+    try:
+        send_contact_email(contact)
+    except Exception as e:
+        print("CONTACT EMAIL FUNCTION ERROR:", str(e))
 
     return Response({
         "success": True,
