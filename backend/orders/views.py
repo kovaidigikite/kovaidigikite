@@ -19,7 +19,7 @@ def send_brevo_email(subject, html_content, to_email):
     payload = {
         "sender": {
             "name": "Kovai Digi Kite",
-            "email": "kovaidigikites@gmail.com"
+            "email": "kovaidigikite@gmail.com"
         },
         "to": [{"email": to_email}],
         "subject": subject,
