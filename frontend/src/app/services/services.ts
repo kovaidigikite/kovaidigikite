@@ -19,17 +19,15 @@ export class ServicesComponent {
     { name: 'Resume', price: 299,},
     { name: 'Academic Presentation', price: 499, },
     { name: 'Academic Project', price: 999, },
-    { name: 'Academic Activities', price: 399,  },
     { name: 'Business Presentation', price: 799,  },
-    { name: 'Websites', price: 4999,  },
-    { name: 'Applications', price: 9999, },
-    { name: 'Digital Marketing', price: 1999, },
-    { name: 'Business Analytics', price: 2999, },
-    { name: 'Business Card', price: 199,  },
-    { name: 'Brochures', price: 499,  },
-    { name: 'Invitation', price: 299,  },
+    { name: 'Websites', price: 2999,  },
+    { name: 'Digital Marketing', price: 999, },
+    { name: 'Business Analytics', price: 1999, },
+    { name: 'Business Card Designing', price: 299,  },
+    { name: 'Brochures Designing', price: 299,  },
+    { name: 'Invitation Designing', price: 299,  },
     { name: 'Social Media Post', price: 99, },
-    { name: 'Flex Printing', price: 999, }
+    { name: 'Printing', price: 'Based on quentity', }
   ];
 
   goToOrder(service: string) {
