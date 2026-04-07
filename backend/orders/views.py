@@ -1,4 +1,3 @@
-from threading import Thread
 from django.conf import settings
 from django.core.mail import send_mail, EmailMessage
 from rest_framework.decorators import api_view, parser_classes
@@ -6,12 +5,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .serializers import OrderSerializer, FeedbackSerializer, ContactSerializer
 
-
-# =========================
-# BACKGROUND EMAIL HELPERS
-# =========================
 def send_order_emails(order):
-    # ✅ admin mail
     try:
         email = EmailMessage(
             subject='New Service Order - KDK',
@@ -36,7 +30,6 @@ Message: {order.message}
     except Exception as e:
         print("ADMIN ORDER MAIL ERROR:", e)
 
-    # ✅ customer mail
     try:
         send_mail(
             subject='Order Received - Kovai Digi Kites',
@@ -79,17 +72,12 @@ Message:
     except Exception as e:
         print("CONTACT MAIL ERROR:", e)
 
-
-# =========================
-# ORDER API
-# =========================
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
 def create_order(request):
     serializer = OrderSerializer(data=request.data)
 
     if not serializer.is_valid():
-        print("ORDER ERRORS:", serializer.errors)
         return Response({
             "success": False,
             "errors": serializer.errors
@@ -97,18 +85,13 @@ def create_order(request):
 
     order = serializer.save()
 
-    # ✅ background mail thread
-    Thread(target=send_order_emails, args=(order,)).start()
+    send_order_emails(order)
 
     return Response({
         "success": True,
         "message": "Order placed successfully"
     })
 
-
-# =========================
-# FEEDBACK API
-# =========================
 @api_view(['POST'])
 def submit_feedback(request):
     serializer = FeedbackSerializer(data=request.data)
@@ -143,8 +126,7 @@ def send_contact_message(request):
 
     contact = serializer.save()
 
-    # ✅ background mail thread
-    Thread(target=send_contact_email, args=(contact,)).start()
+    send_contact_email(contact)
 
     return Response({
         "success": True,
