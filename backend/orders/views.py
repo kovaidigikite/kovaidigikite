@@ -3,7 +3,10 @@ from django.core.mail import send_mail, EmailMessage
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
+
+from orders.models import Order
 from .serializers import OrderSerializer, FeedbackSerializer, ContactSerializer
+from .tasks import send_order_emails_task, send_contact_email_task
 
 
 # ==================================
@@ -108,17 +111,17 @@ def create_order(request):
         }, status=400)
 
     order = serializer.save()
-
-    # ✅ Mail should never break API
-    try:
-        send_order_emails(order)
-    except Exception as e:
-        print("ORDER EMAIL FUNCTION ERROR:", str(e))
-
-    return Response({
-        "success": True,
-        "message": "Order placed successfully"
+# ✅ Background email task (Celery)
+try:
+    send_order_emails_task.delay({
+        "name": Order.name,
+        "email": Order.email,
+        "phone": Order.phone,
+        "service": Order.service,
+        "message": Order.message
     })
+except Exception as e:
+    print("CELERY ORDER TASK ERROR:", str(e))
 
 
 # ==================================
@@ -158,12 +161,16 @@ def send_contact_message(request):
 
     contact = serializer.save()
 
-    # ✅ Mail should never break API
+      # ✅ Background contact email task
     try:
-        send_contact_email(contact)
+        send_contact_email_task.delay({
+            "name": contact.name,
+            "email": contact.email,
+            "phone": contact.phone,
+            "message": contact.message
+        })
     except Exception as e:
-        print("CONTACT EMAIL FUNCTION ERROR:", str(e))
-
+        print("CELERY CONTACT TASK ERROR:", str(e))
     return Response({
         "success": True,
         "message": "Saved successfully"
