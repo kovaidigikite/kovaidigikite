@@ -44,7 +44,7 @@ export class OrderComponent {
     { name: 'Brochures' },
     { name: 'Invitation' },
     { name: 'Social Media Post' },
-    { name: 'Flex Printing' }
+    { name: 'Printing' }
   ];
 
   selectedService: any;
