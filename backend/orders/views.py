@@ -84,6 +84,8 @@ Message:
 # ==================================
 # ORDER API
 # ==================================
+from .models import Order
+
 @api_view(["POST"])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
 def create_order(request):
@@ -91,31 +93,29 @@ def create_order(request):
 
     if not serializer.is_valid():
         return Response(
-            {
-                "success": False,
-                "errors": serializer.errors
-            },
+            {"success": False, "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    validated = serializer.validated_data
+    file_obj = request.FILES.get("file", None)
 
-    order = order.objects.create(
-        name=validated["name"],
-        email=validated["email"],
-        phone=validated["phone"],
-        service=validated["service"],
-        message=validated.get("message", ""),
-        file=request.FILES.get("file") if "file" in request.FILES else None
+    order = Order(
+        name=serializer.validated_data["name"],
+        email=serializer.validated_data["email"],
+        phone=serializer.validated_data["phone"],
+        service=serializer.validated_data["service"],
+        message=serializer.validated_data.get("message", "")
     )
+
+    if file_obj:
+        order.file = file_obj
+
+    order.save()
 
     send_order_emails(order)
 
     return Response(
-        {
-            "success": True,
-            "message": "Order placed successfully"
-        },
+        {"success": True, "message": "Order placed successfully"},
         status=status.HTTP_201_CREATED
     )
 
