@@ -1,57 +1,83 @@
-import os
-import requests
+from django.conf import settings
+from django.core.mail import send_mail, EmailMessage
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
-from .serializers import (
-    OrderSerializer,
-    FeedbackSerializer,
-    ContactSerializer
-)
+from .serializers import OrderSerializer, FeedbackSerializer, ContactSerializer
+
+def send_order_emails(order):
+    try:
+        email = EmailMessage(
+            subject='New Service Order - KDK',
+            body=f"""
+New order received
+
+Name: {order.name}
+Email: {order.email}
+Phone: {order.phone}
+Service: {order.service}
+Message: {order.message}
+            """,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[settings.EMAIL_HOST_USER]
+        )
+
+        if order.file:
+            email.attach_file(order.file.path)
+
+        email.send(fail_silently=False)
+
+    except Exception as e:
+        print("ADMIN ORDER MAIL ERROR:", e)
+
+    try:
+        send_mail(
+            subject='Order Received - Kovai Digi Kites',
+            message=f"""
+Hi {order.name},
+
+Thank you for choosing Kovai Digi Kites.
+
+Your order for "{order.service}" has been received successfully.
+
+Our team will contact you soon.
+
+Regards,
+KDK Team
+            """,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[order.email],
+            fail_silently=False
+        )
+    except Exception as e:
+        print("CUSTOMER MAIL ERROR:", e)
 
 
-# ==================================
-# BREVO EMAIL HELPER
-# ==================================
-def send_brevo_email(subject, html_content, to_email):
-    url = "https://api.brevo.com/v3/smtp/email"
+def send_contact_email(contact):
+    try:
+        send_mail(
+            subject='New Contact Message - KDK',
+            message=f"""
+Name: {contact.name}
+Email: {contact.email}
+Phone: {contact.phone}
 
-    payload = {
-        "sender": {
-            "name": "Kovai Digi Kite",
-            "email": "kovaidigikite@gmail.com"
-        },
-        "to": [{"email": to_email}],
-        "subject": subject,
-        "htmlContent": html_content
-    }
+Message:
+{contact.message}
+            """,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[settings.EMAIL_HOST_USER],
+            fail_silently=False
+        )
+    except Exception as e:
+        print("CONTACT MAIL ERROR:", e)
 
-    headers = {
-        "accept": "application/json",
-        "api-key": os.getenv("BREVO_API_KEY"),
-        "content-type": "application/json"
-    }
-
-    response = requests.post(
-        url,
-        json=payload,
-        headers=headers,
-        timeout=20
-    )
-
-    print("BREVO STATUS:", response.status_code, response.text)
-
-
-# ==================================
-# ORDER API
-# ==================================
-@api_view(["POST"])
+@api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
 def create_order(request):
     serializer = OrderSerializer(data=request.data)
 
     if not serializer.is_valid():
-        print("ORDER ERRORS:", serializer.errors)
         return Response({
             "success": False,
             "errors": serializer.errors
@@ -59,51 +85,14 @@ def create_order(request):
 
     order = serializer.save()
 
-    # ✅ admin mail
-    try:
-        send_brevo_email(
-            "New Service Order - KDK",
-            f"""
-            <h2>New Order Received</h2>
-            <p><b>Name:</b> {order.name}</p>
-            <p><b>Email:</b> {order.email}</p>
-            <p><b>Phone:</b> {order.phone}</p>
-            <p><b>Service:</b> {order.service}</p>
-            <p><b>Message:</b> {order.message}</p>
-            """,
-            "kovaidigikites@gmail.com"
-        )
-    except Exception as e:
-        print("BREVO ADMIN ORDER MAIL ERROR:", str(e))
-
-    # ✅ customer confirmation
-    try:
-        if order.email:
-            send_brevo_email(
-                "Order Received - Kovai Digi Kite",
-                f"""
-                <h2>Hi {order.name},</h2>
-                <p>Thank you for choosing Kovai Digi Kite.</p>
-                <p>Your order for <b>{order.service}</b> has been received successfully.</p>
-                <p>Our team will contact you soon.</p>
-                <br>
-                <p>Regards,<br>KDK Team</p>
-                """,
-                order.email
-            )
-    except Exception as e:
-        print("BREVO CUSTOMER ORDER MAIL ERROR:", str(e))
+    send_order_emails(order)
 
     return Response({
         "success": True,
         "message": "Order placed successfully"
     })
 
-
-# ==================================
-# FEEDBACK API
-# ==================================
-@api_view(["POST"])
+@api_view(['POST'])
 def submit_feedback(request):
     serializer = FeedbackSerializer(data=request.data)
 
@@ -121,10 +110,10 @@ def submit_feedback(request):
     }, status=400)
 
 
-# ==================================
+# =========================
 # CONTACT API
-# ==================================
-@api_view(["POST"])
+# =========================
+@api_view(['POST'])
 def send_contact_message(request):
     serializer = ContactSerializer(data=request.data)
 
@@ -137,20 +126,7 @@ def send_contact_message(request):
 
     contact = serializer.save()
 
-    try:
-        send_brevo_email(
-            "New Contact Message - KDK",
-            f"""
-            <h2>New Contact Message</h2>
-            <p><b>Name:</b> {contact.name}</p>
-            <p><b>Email:</b> {contact.email}</p>
-            <p><b>Phone:</b> {contact.phone}</p>
-            <p><b>Message:</b> {contact.message}</p>
-            """,
-            "kovaidigikites@gmail.com"
-        )
-    except Exception as e:
-        print("BREVO CONTACT MAIL ERROR:", str(e))
+    send_contact_email(contact)
 
     return Response({
         "success": True,
