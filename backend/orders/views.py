@@ -1,40 +1,52 @@
 from django.conf import settings
 from django.core.mail import send_mail, EmailMessage
 from rest_framework.decorators import api_view, parser_classes
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
-from .serializers import OrderSerializer, FeedbackSerializer, ContactSerializer
+from rest_framework import status
+
+from .serializers import (
+    OrderSerializer,
+    FeedbackSerializer,
+    ContactSerializer
+)
+
 
 def send_order_emails(order):
-    try:
-        email = EmailMessage(
-            subject='New Service Order - KDK',
-            body=f"""
+    # -----------------------------
+    # Admin email
+    # -----------------------------
+    admin_email = EmailMessage(
+        subject="New Service Order - KDK",
+        body=f"""
 New order received
 
 Name: {order.name}
 Email: {order.email}
-
 Phone: {order.phone}
 Service: {order.service}
 Message: {order.message}
-            """,
-            from_email=settings.EMAIL_HOST_USER,
-            to=[settings.EMAIL_HOST_USER]
-        )
+        """,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[settings.DEFAULT_FROM_EMAIL],
+    )
 
-        if order.file:
-            email.attach_file(order.file.path)
+    # attach file only if it truly exists
+    if getattr(order, "file", None):
+        try:
+            if order.file.name:
+                admin_email.attach_file(order.file.path)
+        except Exception:
+            pass
 
-        email.send(fail_silently=False)
+    admin_email.send(fail_silently=True)
 
-    except Exception as e:
-        print("ADMIN ORDER MAIL ERROR:", e)
-
-    try:
-        send_mail(
-            subject='Order Received - Kovai Digi Kites',
-            message=f"""
+    # -----------------------------
+    # Customer confirmation
+    # -----------------------------
+    send_mail(
+        subject="Order Received - Kovai Digi Kites",
+        message=f"""
 Hi {order.name},
 
 Thank you for choosing Kovai Digi Kites.
@@ -45,91 +57,112 @@ Our team will contact you soon.
 
 Regards,
 KDK Team
-            """,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[order.email],
-            fail_silently=False
-        )
-    except Exception as e:
-        print("CUSTOMER MAIL ERROR:", e)
+        """,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[order.email],
+        fail_silently=True,
+    )
 
 
 def send_contact_email(contact):
-    try:
-        send_mail(
-            subject='New Contact Message - KDK',
-            message=f"""
+    send_mail(
+        subject="New Contact Message - KDK",
+        message=f"""
 Name: {contact.name}
 Email: {contact.email}
 Phone: {contact.phone}
 
 Message:
 {contact.message}
-            """,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[settings.EMAIL_HOST_USER],
-            fail_silently=False
-        )
-    except Exception as e:
-        print("CONTACT MAIL ERROR:", e)
+        """,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[settings.DEFAULT_FROM_EMAIL],
+        fail_silently=True,
+    )
 
-@api_view(['POST'])
-@parser_classes([MultiPartParser, FormParser])
+
+# ==================================
+# ORDER API
+# ==================================
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def create_order(request):
     serializer = OrderSerializer(data=request.data)
 
-    if not serializer.is_valid():
-        return Response({
+    if serializer.is_valid():
+        order = serializer.save()
+
+        # send mail after successful save
+        send_order_emails(order)
+
+        return Response(
+            {
+                "success": True,
+                "message": "Order placed successfully"
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    return Response(
+        {
             "success": False,
             "errors": serializer.errors
-        }, status=400)
+        },
+        status=status.HTTP_400_BAD_REQUEST
+    )
 
-    order = serializer.save()
 
-    send_order_emails(order)
-
-    return Response({
-        "success": True,
-        "message": "Order placed successfully"
-    })
-
-@api_view(['POST'])
+# ==================================
+# FEEDBACK API
+# ==================================
+@api_view(["POST"])
+@parser_classes([JSONParser, FormParser])
 def submit_feedback(request):
     serializer = FeedbackSerializer(data=request.data)
 
     if serializer.is_valid():
         serializer.save()
-        return Response({
-            "success": True,
-            "message": "Feedback submitted successfully"
-        })
+        return Response(
+            {
+                "success": True,
+                "message": "Feedback submitted successfully"
+            },
+            status=status.HTTP_201_CREATED
+        )
 
-    print("FEEDBACK ERRORS:", serializer.errors)
-    return Response({
-        "success": False,
-        "errors": serializer.errors
-    }, status=400)
+    return Response(
+        {
+            "success": False,
+            "errors": serializer.errors
+        },
+        status=status.HTTP_400_BAD_REQUEST
+    )
 
 
-# =========================
+# ==================================
 # CONTACT API
-# =========================
-@api_view(['POST'])
+# ==================================
+@api_view(["POST"])
+@parser_classes([JSONParser, FormParser])
 def send_contact_message(request):
     serializer = ContactSerializer(data=request.data)
 
-    if not serializer.is_valid():
-        print("CONTACT ERRORS:", serializer.errors)
-        return Response({
+    if serializer.is_valid():
+        contact = serializer.save()
+        send_contact_email(contact)
+
+        return Response(
+            {
+                "success": True,
+                "message": "Saved successfully"
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    return Response(
+        {
             "success": False,
             "errors": serializer.errors
-        }, status=400)
-
-    contact = serializer.save()
-
-    send_contact_email(contact)
-
-    return Response({
-        "success": True,
-        "message": "Saved successfully"
-    })
+        },
+        status=status.HTTP_400_BAD_REQUEST
+    )
