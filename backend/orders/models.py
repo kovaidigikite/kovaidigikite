@@ -4,8 +4,8 @@ from django.db import models
 
 class Order(models.Model):
     name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
+    email = models.EmailField(default="unknown@example.com")
+    phone = models.CharField(max_length=20, default="0000000000")
     service = models.CharField(max_length=100)
     message = models.TextField(blank=True, null=True)
     file = models.FileField(
