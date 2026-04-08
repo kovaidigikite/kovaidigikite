@@ -73,7 +73,7 @@ export class OrderComponent {
   this.selectedFile = event.files[0];
 }
 
- placeOrder() {
+placeOrder() {
   if (!this.name || !this.email || !this.phone || !this.selectedService) {
     this.msg.add({
       severity: 'warn',
@@ -102,10 +102,19 @@ export class OrderComponent {
     body: formData
   })
     .then(async res => {
-      const data = await res.json();
-      console.log("ORDER API:", data);
+      const contentType = res.headers.get('content-type');
 
-      if (data.success) {
+      let data: any;
+
+      if (contentType?.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        console.error('SERVER HTML ERROR:', text);
+        throw new Error('Server returned invalid response');
+      }
+
+      if (res.ok && data.success) {
         this.msg.add({
           severity: 'success',
           summary: 'Order Sent',
@@ -122,16 +131,17 @@ export class OrderComponent {
         this.msg.add({
           severity: 'error',
           summary: 'Failed',
-          detail: JSON.stringify(data.errors)
+          detail: JSON.stringify(data.errors || data.message)
         });
       }
     })
     .catch(err => {
-      console.error(err);
+      console.error('ORDER ERROR:', err);
+
       this.msg.add({
         severity: 'error',
-        summary: 'Upload Failed',
-        detail: 'Server error ❌'
+        summary: 'Server Error',
+        detail: 'Backend server failed ❌'
       });
     });
 }
