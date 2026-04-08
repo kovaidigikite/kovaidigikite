@@ -89,28 +89,35 @@ Message:
 def create_order(request):
     serializer = OrderSerializer(data=request.data)
 
-    if serializer.is_valid():
-        order = serializer.save()
-
-        # send mail after successful save
-        send_order_emails(order)
-
+    if not serializer.is_valid():
         return Response(
             {
-                "success": True,
-                "message": "Order placed successfully"
+                "success": False,
+                "errors": serializer.errors
             },
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_400_BAD_REQUEST
         )
+
+    validated = serializer.validated_data
+
+    order = order.objects.create(
+        name=validated["name"],
+        email=validated["email"],
+        phone=validated["phone"],
+        service=validated["service"],
+        message=validated.get("message", ""),
+        file=request.FILES.get("file") if "file" in request.FILES else None
+    )
+
+    send_order_emails(order)
 
     return Response(
         {
-            "success": False,
-            "errors": serializer.errors
+            "success": True,
+            "message": "Order placed successfully"
         },
-        status=status.HTTP_400_BAD_REQUEST
+        status=status.HTTP_201_CREATED
     )
-
 
 # ==================================
 # FEEDBACK API
