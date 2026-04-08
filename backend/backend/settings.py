@@ -3,12 +3,22 @@ from dotenv import load_dotenv
 from pathlib import Path
 import dj_database_url
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 load_dotenv(BASE_DIR / ".env")
-DEBUG = os.getenv("DEBUG") == "True"
-SECRET_KEY = os.getenv("SECRET_KEY")
 
+SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+
+DATABASES = {
+    "default": dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 ALLOWED_HOSTS = [
     "kovaidigikite.com",
     "www.kovaidigikite.com",
@@ -75,12 +85,6 @@ TEMPLATES = [{
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-DATABASES = {
-    "default": dj_database_url.parse(
-        os.getenv("DATABASE_URL")
-    )
-}
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -94,6 +98,7 @@ SERVER_EMAIL = EMAIL_HOST_USER
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 os.makedirs(BASE_DIR / "media" / "orders", exist_ok=True)
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
