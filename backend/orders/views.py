@@ -14,6 +14,7 @@ New order received
 
 Name: {order.name}
 Email: {order.email}
+
 Phone: {order.phone}
 Service: {order.service}
 Message: {order.message}
