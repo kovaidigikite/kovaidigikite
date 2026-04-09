@@ -117,8 +117,6 @@ def create_order(request):
             file=file_obj if file_obj else None
         )
         
-        send_order_emails(order)
-        
         return Response(
             {
                 "success": True,
