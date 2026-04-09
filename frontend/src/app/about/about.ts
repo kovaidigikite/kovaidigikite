@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-about',
@@ -49,7 +50,7 @@ export class AboutComponent {
       message: this.contactMessage
     };
 
-    fetch('https://kovaidigikite.onrender.com/api/contact/', {
+    fetch(`${environment.apiUrl}/contact/`,  {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
