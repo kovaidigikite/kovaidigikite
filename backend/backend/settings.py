@@ -41,32 +41,45 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-CSRF_TRUSTED_ORIGINS = [
+# =========================
+# CORS SETTINGS
+# =========================
+CORS_ALLOWED_ORIGINS = [
     "https://kovaidigikite.com",
     "https://www.kovaidigikite.com",
-    "https://api.kovaidigikite.com",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOW_HEADERS = [
-    "content-type",
-    "authorization",
-    "x-requested-with",
     "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
     "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
+
 CORS_ALLOW_METHODS = [
+    "DELETE",
     "GET",
-    "POST",
     "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
 ]
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
