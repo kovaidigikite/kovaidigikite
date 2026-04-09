@@ -94,37 +94,28 @@ Message:
 @api_view(["POST"])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
 def create_order(request):
-    print("ORDER REQUEST DATA:", request.data)
-
-    serializer = OrderSerializer(data=request.data)
-
-    if not serializer.is_valid():
-        print("ORDER VALIDATION ERROR:", serializer.errors)
-        return Response(
-            {
-                "success": False,
-                "errors": serializer.errors
-            },
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
     try:
+        serializer = OrderSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(
+                {
+                    "success": False,
+                    "errors": serializer.errors
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         file_obj = request.FILES.get("file")
 
-        order = Order(
+        order = Order.objects.create(
             name=serializer.validated_data["name"],
             email=serializer.validated_data["email"],
             phone=serializer.validated_data["phone"],
             service=serializer.validated_data["service"],
-            message=serializer.validated_data.get("message", "")
+            message=serializer.validated_data.get("message", ""),
+            file=file_obj if file_obj else None
         )
-
-        if file_obj:
-            order.file = file_obj
-
-        order.save()
-
-        send_order_emails(order)
 
         return Response(
             {
@@ -135,7 +126,7 @@ def create_order(request):
         )
 
     except Exception as e:
-        print("ORDER SAVE ERROR:", str(e))
+        print("ORDER ERROR:", str(e))
         return Response(
             {
                 "success": False,
@@ -143,7 +134,6 @@ def create_order(request):
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
 
 # ==================================
 # FEEDBACK API
