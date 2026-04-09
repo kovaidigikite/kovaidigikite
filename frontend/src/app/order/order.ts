@@ -84,14 +84,14 @@ placeOrder() {
   }
 
   const formData = new FormData();
-  formData.append('name', this.name);
-  formData.append('email', this.email);
-  formData.append('phone', this.phone);
+  formData.append('name', this.name.trim());
+  formData.append('email', this.email.trim());
+  formData.append('phone', this.phone.trim());
   formData.append(
     'service',
     this.selectedService?.name || this.selectedService
   );
-  formData.append('message', this.message || '');
+  formData.append('message', this.message?.trim() || '');
 
   if (this.selectedFile) {
     formData.append('file', this.selectedFile);
@@ -102,16 +102,14 @@ placeOrder() {
     body: formData
   })
     .then(async res => {
-      const contentType = res.headers.get('content-type');
+      const text = await res.text();
+      console.log('RAW RESPONSE:', text);
 
       let data: any;
-
-      if (contentType?.includes('application/json')) {
-        data = await res.json();
-      } else {
-        const text = await res.text();
-        console.error('SERVER HTML ERROR:', text);
-        throw new Error('Server returned invalid response');
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`Server error: ${text}`);
       }
 
       if (res.ok && data.success) {
@@ -130,8 +128,8 @@ placeOrder() {
       } else {
         this.msg.add({
           severity: 'error',
-          summary: 'Failed',
-          detail: JSON.stringify(data.errors || data.message)
+          summary: 'Validation Failed',
+          detail: JSON.stringify(data.errors)
         });
       }
     })
@@ -140,8 +138,8 @@ placeOrder() {
 
       this.msg.add({
         severity: 'error',
-        summary: 'Server Error',
-        detail: 'Backend server failed ❌'
+        summary: 'Order Failed',
+        detail: err.message
       });
     });
 }
