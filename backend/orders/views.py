@@ -116,7 +116,9 @@ def create_order(request):
             message=serializer.validated_data.get("message", ""),
             file=file_obj if file_obj else None
         )
-
+        
+        send_order_emails(order)
+        
         return Response(
             {
                 "success": True,
