@@ -10,15 +10,17 @@ from .serializers import (
     FeedbackSerializer,
     ContactSerializer
 )
+from .models import Order
 
 
+# ==================================
+# EMAIL HELPERS
+# ==================================
 def send_order_emails(order):
-    # -----------------------------
-    # Admin email
-    # -----------------------------
-    admin_email = EmailMessage(
-        subject="New Service Order - KDK",
-        body=f"""
+    try:
+        admin_email = EmailMessage(
+            subject="New Service Order - KDK",
+            body=f"""
 New order received
 
 Name: {order.name}
@@ -26,27 +28,27 @@ Email: {order.email}
 Phone: {order.phone}
 Service: {order.service}
 Message: {order.message}
-        """,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[settings.DEFAULT_FROM_EMAIL],
-    )
+            """,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[settings.DEFAULT_FROM_EMAIL],
+        )
 
-    # attach file only if it truly exists
-    if getattr(order, "file", None):
-        try:
-            if order.file.name:
-                admin_email.attach_file(order.file.path)
-        except Exception:
-            pass
+        if getattr(order, "file", None):
+            try:
+                if order.file and order.file.name:
+                    admin_email.attach_file(order.file.path)
+            except Exception as e:
+                print("FILE ATTACH ERROR:", e)
 
-    admin_email.send(fail_silently=True)
+        admin_email.send(fail_silently=True)
 
-    # -----------------------------
-    # Customer confirmation
-    # -----------------------------
-    send_mail(
-        subject="Order Received - Kovai Digi Kites",
-        message=f"""
+    except Exception as e:
+        print("ADMIN MAIL ERROR:", e)
+
+    try:
+        send_mail(
+            subject="Order Received - Kovai Digi Kites",
+            message=f"""
 Hi {order.name},
 
 Thank you for choosing Kovai Digi Kites.
@@ -57,67 +59,91 @@ Our team will contact you soon.
 
 Regards,
 KDK Team
-        """,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[order.email],
-        fail_silently=True,
-    )
+            """,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[order.email],
+            fail_silently=True,
+        )
+    except Exception as e:
+        print("CUSTOMER MAIL ERROR:", e)
 
 
 def send_contact_email(contact):
-    send_mail(
-        subject="New Contact Message - KDK",
-        message=f"""
+    try:
+        send_mail(
+            subject="New Contact Message - KDK",
+            message=f"""
 Name: {contact.name}
 Email: {contact.email}
 Phone: {contact.phone}
 
 Message:
 {contact.message}
-        """,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[settings.DEFAULT_FROM_EMAIL],
-        fail_silently=True,
-    )
+            """,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[settings.DEFAULT_FROM_EMAIL],
+            fail_silently=True,
+        )
+    except Exception as e:
+        print("CONTACT MAIL ERROR:", e)
 
 
 # ==================================
 # ORDER API
 # ==================================
-from .models import Order
-
 @api_view(["POST"])
 @parser_classes([MultiPartParser, FormParser, JSONParser])
 def create_order(request):
+    print("ORDER REQUEST DATA:", request.data)
+
     serializer = OrderSerializer(data=request.data)
 
     if not serializer.is_valid():
+        print("ORDER VALIDATION ERROR:", serializer.errors)
         return Response(
-            {"success": False, "errors": serializer.errors},
+            {
+                "success": False,
+                "errors": serializer.errors
+            },
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    file_obj = request.FILES.get("file", None)
+    try:
+        file_obj = request.FILES.get("file")
 
-    order = Order(
-        name=serializer.validated_data["name"],
-        email=serializer.validated_data["email"],
-        phone=serializer.validated_data["phone"],
-        service=serializer.validated_data["service"],
-        message=serializer.validated_data.get("message", "")
-    )
+        order = Order(
+            name=serializer.validated_data["name"],
+            email=serializer.validated_data["email"],
+            phone=serializer.validated_data["phone"],
+            service=serializer.validated_data["service"],
+            message=serializer.validated_data.get("message", "")
+        )
 
-    if file_obj:
-        order.file = file_obj
+        if file_obj:
+            order.file = file_obj
 
-    order.save()
+        order.save()
 
-    send_order_emails(order)
+        send_order_emails(order)
 
-    return Response(
-        {"success": True, "message": "Order placed successfully"},
-        status=status.HTTP_201_CREATED
-    )
+        return Response(
+            {
+                "success": True,
+                "message": "Order placed successfully"
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    except Exception as e:
+        print("ORDER SAVE ERROR:", str(e))
+        return Response(
+            {
+                "success": False,
+                "message": str(e)
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
 
 # ==================================
 # FEEDBACK API
